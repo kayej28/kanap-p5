@@ -1,63 +1,50 @@
-fetch("http://localhost:3000/api/products")
+const params = new URLSearchParams(window.location.search);
+const id = params.getAll("id")[0];
+console.log(id);
+fetch("http://localhost:3000/api/products/" + id)
   .then((response) => response.json())
   .then((data) => {
-    //console.log("data=",data);
-    return addproducts(data);
-  });
+    console.log("data=", data);
+    addProducts(data);
+  })
+  .catch((err) => console.error(err));
 
-fetch("http://localhost:3000/api/products")
-  .then((response) => response.json())
-  .then((data) => {
-    return addAllProperty(data);
-  });
-
-function addproducts(data) {
-  //console.log(data);
-  let selectKanap;
-  const params = new URLSearchParams(window.location.search);
-  const id = params.getAll("id");
-  data.forEach((kanap) => {
-    if (kanap._id == id) {
-      selectKanap = kanap;
-      //console.log(selectKanap);
-    }
-  });
-  const article = addKanap(selectKanap);
+function addProducts(data) {
+  const article = addKanap(data);
   const div = document.querySelector(".item__img");
-  //console.log(article, section);
   div.innerHTML = article;
-  //console.log(div.innerHTML);
+  addPrice(data);
+  addName(data);
+  addDescription(data);
+  addValue(data);
 }
 
-function addKanap(selectKanap) {
-  //console.log(selectKanap.imageUrl);
-  const html = `<a href="./product.html?id=${selectKanap._id}">
-  <img src="${selectKanap.imageUrl}" alt="${selectKanap.altTxt}">`;
+function addKanap(data) {
+  const html = `<a href="./product.html?id=${data._id}">
+  <img src="${data.imageUrl}" alt="${data.altTxt}">`;
   return html;
 }
 
-//proprieter titre et prix
-
-function addAllProperty(data) {
-  //console.log(data);
-  let selectKanap;
-  const params = new URLSearchParams(window.location.search);
-  const id = params.getAll("id");
-  data.forEach((kanap) => {
-    if (kanap._id == id) {
-      selectKanap = kanap;
-      //console.log(selectKanap);
-    }
-  });
-  const pouette = addProperty(selectKanap);
-  const div = document.querySelector(".item__content__titlePrice");
-  div.innerHTML = pouette;
-  //console.log(div.innerHTML);
+function addPrice(data) {
+  const price = data.price;
+  const span = document.querySelector("#price");
+  span.innerHTML = price;
 }
 
-function addProperty(selectKanap) {
-  const html = `<a href="./product.html?id=${selectKanap._id}">
-  <h1 id="title">${selectKanap.name}</h1>
-  <p>Prix : <span id="price">${selectKanap.price}</span>€</p>`;
-  return html;
+function addName(data) {
+  const name = data.name;
+  const h1 = document.querySelector("#title");
+  h1.innerHTML = name;
+}
+
+function addDescription(data) {
+  const description = data.description;
+  const p = document.querySelector("#description");
+  p.innerHTML = description;
+}
+
+function addValue(data) {
+  const value = data.value;
+  const select = document.querySelector("#colors");
+  select.innerHTML = value;
 }
